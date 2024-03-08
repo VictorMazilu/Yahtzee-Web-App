@@ -1,0 +1,5 @@
+<webcam 
+  [trigger]="triggerObservable" 
+  (imageCapture)="handleImage($event)"></webcam>
+              
+<button class="btn btn-success" (click)="triggerSnapshot();">Roll!</button>
