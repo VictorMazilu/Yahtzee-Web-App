@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
@@ -59,21 +60,22 @@ namespace Yahtzee.Controllers
                         else if (postedFile.ContentLength > MaxContentLength)
                         {
                             var message = string.Format("Please Upload a file upto 1 mb.");
-
                             return Request.CreateResponse(HttpStatusCode.BadRequest, message);
                         }
                         else
                         {
 
-                            //if needed write the code to update the table
-                            var filePath = HttpContext.Current.Server.MapPath("~/Userimage/image" + extension);
-                            //Userimage myfolder name where I want to save my image
-                            postedFile.SaveAs(filePath);
+                            byte[] fileData = null;
+                            using (var binaryReader = new BinaryReader(postedFile.InputStream))
+                            {
+                                fileData = binaryReader.ReadBytes(postedFile.ContentLength);
+                            }
+                            var sessionId = Utils.GetCookieValue(Request.Headers, "sessionId");
+                            // Set value
+                            HttpContext.Current.Application[sessionId + "-image"] = fileData;
+                            return Request.CreateResponse(HttpStatusCode.Accepted, "File received and stored in-memory");
                         }
                     }
-
-                    var message1 = string.Format("Image Updated Successfully.");
-                    return Request.CreateErrorResponse(HttpStatusCode.Created, message1); ;
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No file found in the request.");
             }
@@ -86,6 +88,47 @@ namespace Yahtzee.Controllers
 
     public static class Utils
     {
+        public static string GetCookieValue(this HttpRequestHeaders requestHeaders, string cookieName)
+        {
+            foreach (var header in requestHeaders)
+            {
+                if (header.Key.Equals("Cookie", StringComparison.InvariantCultureIgnoreCase) == false)
+                    continue;
+
+                var cookiesHeaderValue = header.Value.FirstOrDefault();
+                if (cookiesHeaderValue == null)
+                    return null;
+
+                var cookieCollection = cookiesHeaderValue.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var cookieNameValue in cookieCollection)
+                {
+                    var parts = cookieNameValue.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length != 2) continue;
+                    if (parts[0].Trim().Equals(cookieName, StringComparison.InvariantCultureIgnoreCase))
+                        return parts[1].Trim();
+                }
+            }
+
+            return null;
+        }
+        public static FileInfo CreateFile(byte[] bytes, string filePath)
+        {
+            try
+            {
+                // Write the byte array to the specified file path
+                File.WriteAllBytes(filePath, bytes);
+
+                // Create a FileInfo object representing the file
+                FileInfo fileInfo = new FileInfo(filePath);
+
+                return fileInfo;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+                return null;
+            }
+        }
         public static byte[] ConvertBlobToFormattedPng(byte[] blobPngByteArray)
         {
             try

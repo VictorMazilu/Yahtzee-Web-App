@@ -12,6 +12,7 @@ namespace Yahtzee
         {
             // Web API configuration and services
             var cors = new EnableCorsAttribute("*", "*", "*");
+            cors.SupportsCredentials = true;
             config.EnableCors(cors);
 
             // Web API routes
