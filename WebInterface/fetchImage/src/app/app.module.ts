@@ -6,16 +6,23 @@ import { AppComponent } from './app.component';
 import { WebcamModule } from 'ngx-webcam';
 import { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './session/login/login.component';
+import { LogoutComponent } from './session/logout/logout.component';
+import { FormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     WebcamModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     provideClientHydration()

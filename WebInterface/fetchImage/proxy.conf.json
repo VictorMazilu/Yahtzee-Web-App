@@ -1,0 +1,10 @@
+{
+    "/posts": {
+      "target": "https://yahtzee-microservice.v1cky.com",
+      "secure": true,
+      "pathRewrite": {
+      "^/posts": ""
+    },
+      "changeOrigin": true
+    }
+  }

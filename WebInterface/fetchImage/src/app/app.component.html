@@ -1,5 +1,19 @@
-<webcam 
+
+<ng-container *ngIf="!userLoggedIn">
+  <app-login (userLoggedIn)="receiveMessage($event)"></app-login>
+</ng-container>
+
+<ng-container *ngIf="userLoggedIn">
+  <webcam 
   [trigger]="triggerObservable" 
-  (imageCapture)="handleImage($event)"></webcam>
-              
-<button class="btn btn-success" (click)="triggerSnapshot();">Roll!</button>
+  (imageCapture)="handleImage($event)"
+  [height]="380" 
+  [width]="500" ></webcam>
+<div>
+  <button class="btn btn-success" (click)="triggerSnapshot();">Roll!</button>
+</div>
+<div>
+{{dataMap | json}}
+</div>
+<app-logout (userLoggedIn)="receiveMessage($event)"></app-logout>
+</ng-container>
