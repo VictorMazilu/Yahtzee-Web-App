@@ -1,4 +1,5 @@
-﻿using Emgu.CV;
+﻿
+using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
@@ -49,11 +50,7 @@ namespace YahtzeeAPI.Recognition
         public static Emgu.CV.Mat JoinImages(double scale, List<Emgu.CV.Mat> images, bool oneDimArr = true)
         {
             Emgu.CV.Mat result = new Emgu.CV.Mat();
-
-            for (int i = 0; i < images.Count; i++)
-            {
-                Emgu.CV.CvInvoke.HConcat(images[i], result, result);
-            }
+            Emgu.CV.CvInvoke.HConcat(images.ToArray(), result);
 
             return result;
         }
@@ -104,11 +101,12 @@ namespace YahtzeeAPI.Recognition
             return newImages;
         }
 
-        public static (List<Emgu.CV.Mat>, List<Point>) GetContours(ref Emgu.CV.Mat img, ref Emgu.CV.Mat drawImg)
+        public static (List<Emgu.CV.Mat>, List<Point>, double) GetContours(ref Emgu.CV.Mat img, ref Emgu.CV.Mat drawImg)
         {
-            Emgu.CV.Mat tempIMg = img.Clone();
             List<Image<Bgr, byte>> dices = new List<Image<Bgr, byte>>();
             List<Point> positions = new List<Point>();
+            double contourWidth = 0;
+
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
                 Emgu.CV.CvInvoke.FindContours(img, contours, null, RetrType.List, ChainApproxMethod.ChainApproxNone);
@@ -117,10 +115,11 @@ namespace YahtzeeAPI.Recognition
                 {
                     for (int i = 0; i < contours.Size; i++)
                     {
-                        double area = Emgu.CV.CvInvoke.ContourArea(contours[i]);
-                        Console.Out.WriteLine(area);
-                        if (area >= 3900 && area <= 6300)
+                        if (IsSquare(contours[i]))
                         {
+                            contourWidth = CvInvoke.ArcLength(contours[i], true);
+                            double area = Emgu.CV.CvInvoke.ContourArea(contours[i]);
+                            Console.Out.WriteLine(area);
                             RotatedRect rect = Emgu.CV.CvInvoke.MinAreaRect(contours[i]);
                             PointF[] box = rect.GetVertices();
 
@@ -142,12 +141,26 @@ namespace YahtzeeAPI.Recognition
 
                                 // Warp the image using the perspective transformation matrix
                                 Emgu.CV.Mat warpedImage = new Emgu.CV.Mat();
-                                Emgu.CV.CvInvoke.WarpPerspective(tempIMg, warpedImage, perspectiveMatrix, new Size(60, 60), Inter.Linear, Warp.Default, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(0));
+                                Emgu.CV.CvInvoke.WarpPerspective(img, warpedImage, perspectiveMatrix, new Size(Convert.ToInt32(rect.Size.Width), Convert.ToInt32(rect.Size.Height)), Inter.Linear, Warp.Default, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(0));
 
                                 dices.Add(warpedImage.ToImage<Bgr, byte>());
                                 positions.Add(new Point((int)box[0].X, (int)box[0].Y));
 
                                 Emgu.CV.CvInvoke.DrawContours(drawImg, contours, i, new MCvScalar(0, 255, 0), 2);
+
+                                //using (Matrix<float> perspectiveTransform = new Matrix<float>(Emgu.CV.CvInvoke.GetPerspectiveTransform(sourcePoints, targetPoints).Size))
+                                //{
+                                //    Emgu.CV.Mat warped = new Emgu.CV.Mat();
+                                //    Emgu.CV.CvInvoke.WarpPerspective(imageForCropping, warped, perspectiveTransform, new Size(width, height), Inter.Linear, Warp.Default, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(0, 0, 0));
+
+                                //    ///debug
+                                //    Emgu.CV.CvInvoke.Imshow("[contour]",warped);
+
+                                //    dices.Add(warped.ToImage<Bgr, byte>());
+                                //    positions.Add(new Point((int)box[0].X, (int)box[0].Y));
+
+                                //    Emgu.CV.CvInvoke.DrawContours(drawImg, contours, i, new MCvScalar(0, 255, 0), 2);
+                                //}
                             }
                         }
                     }
@@ -158,7 +171,84 @@ namespace YahtzeeAPI.Recognition
             {
                 matDices.Add(dices[i].Mat);
             }
-            return (matDices, positions);
+            return (matDices, positions, contourWidth);
+
+            //// Find contours
+            //VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+            //Emgu.CV.Mat hierarchy = new Emgu.CV.Mat();
+            //Emgu.CV.CvInvoke.FindContours(img, contours, hierarchy, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+
+            //// Iterate through contours and calculate positions
+            //List<Point> contourPositions = new List<Point>();
+
+            //for (int i = 0; i < contours.Size; i++)
+            //{
+            //    VectorOfPoint contour = contours[i];
+            //    Moments moments = Emgu.CV.CvInvoke.Moments(contour);
+
+            //    // Calculate centroid of the contour
+            //    int cx = (int)(moments.M10 / moments.M00);
+            //    int cy = (int)(moments.M01 / moments.M00);
+            //    Point centroid = new Point(cx, cy);
+
+            //    double area = Emgu.CV.CvInvoke.ContourArea(contours[i]);
+            //    if ( area >= 1200)
+            //        contourPositions.Add(centroid);
+            //}
+
+            //// Iterate through contours and extract images inside the contours
+            //List<Emgu.CV.Mat> contourImages = new List<Emgu.CV.Mat>();
+
+            //for (int i = 0; i < contours.Size; i++)
+            //{
+            //    // Create a mask for each contour
+            //    Emgu.CV.Mat mask = new Emgu.CV.Mat(img.Size, DepthType.Cv8U, 1);
+            //    mask.SetTo(new MCvScalar(0));
+
+            //    // Draw the contour on the mask
+            //    Emgu.CV.CvInvoke.DrawContours(mask, contours, i, new MCvScalar(255), -1);
+
+            //    // Extract the region of interest (ROI) using the mask
+            //    Emgu.CV.Mat roi = new Emgu.CV.Mat();
+            //    img.CopyTo(roi, mask);
+
+            //    // Convert the ROI to Image<Bgr, byte> format
+            //    Emgu.CV.Mat contourImage = roi;//.ToImage<Bgr, byte>();
+
+            //    Emgu.CV.Mat binaryImage = new Emgu.CV.Mat();
+            //    Emgu.CV.CvInvoke.Threshold(contourImage, binaryImage, 127, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
+
+            //    double area = Emgu.CV.CvInvoke.ContourArea(binaryImage);
+            //    if(area >= 1200)
+            //        contourImages.Add(contourImage);
+            //}
+            //return (contourImages, contourPositions);
+            // Display the contours and their positions
+            //for (int i = 0; i < contourPositions.Count; i++)
+            //{
+            //    Point position = contourPositions[i];
+            //    //Console.WriteLine("Contour " + i + " position: (" + position.X + ", " + position.Y + ")");
+            //}
+        }
+
+        // Function to check if a contour is approximately square
+        static bool IsSquare(VectorOfPoint contour)
+        {
+            // Check if the contour has 4 corners (approximately square)
+            //if (contour.Size != 4)
+            //    return false;
+
+            // Calculate the area of the contour
+            double area = CvInvoke.ContourArea(contour);
+
+            // Compute the perimeter of the contour
+            double perimeter = CvInvoke.ArcLength(contour, true);
+
+            // Check if the contour is approximately square based on the ratio of area to perimeter
+            double aspectRatio = perimeter * perimeter / area;
+            const double maxAspectRatio = 17; // Adjust as needed
+            const double minAspectRatio = 15; // Adjust as needed
+            return aspectRatio < maxAspectRatio && aspectRatio > minAspectRatio;
         }
 
         public static Emgu.CV.Mat OpenImage(string file)
@@ -182,7 +272,7 @@ namespace YahtzeeAPI.Recognition
             Emgu.CV.Mat img = null;
             try
             {
-                img = Emgu.CV.CvInvoke.Imread(filePath, ImreadModes.AnyColor);
+                img = Emgu.CV.CvInvoke.Imread(filePath);
             }
             catch (Exception ex)
             {
@@ -195,7 +285,7 @@ namespace YahtzeeAPI.Recognition
 
         public static (Emgu.CV.Mat, int) SimpleBlobDetection(ref Emgu.CV.Mat img, double minThreshold, double maxThreshold, double minArea, double maxArea, double minCircularity, double minInertiaRatio)
         {
-            CvInvoke.DestroyAllWindows();
+
             // Set up parameters for SimpleBlobDetector
             SimpleBlobDetectorParams blobParams = new SimpleBlobDetectorParams();
             blobParams.FilterByArea = true;
@@ -242,38 +332,23 @@ namespace YahtzeeAPI.Recognition
         public static Emgu.CV.Mat ProcessImage(Emgu.CV.Mat img, double gamma, Emgu.CV.Mat kernel, Emgu.CV.CvEnum.ThresholdType method)
         {
             // Convert the image to grayscale
-            Emgu.CV.Mat imgGray = new Emgu.CV.Mat();
-            Emgu.CV.CvInvoke.CvtColor(img, imgGray, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
-
-            // Apply gamma correction
-            Emgu.CV.Mat imgGammaApplied = ApplyGamma(imgGray, gamma);
-            //Emgu.CV.Mat imgGammaApplied = imgGray;
+            Mat grayImage = new Mat();
+            CvInvoke.CvtColor(img, grayImage, ColorConversion.Bgr2Gray);
 
             // Apply Gaussian blur
-            Emgu.CV.Mat imgBlur = new Emgu.CV.Mat();
-            Emgu.CV.CvInvoke.GaussianBlur(imgGammaApplied, imgBlur, new Size(3, 3), 8);
+            Mat blurredImage = new Mat();
+            CvInvoke.GaussianBlur(grayImage, blurredImage, new Size(5, 5), 0);
 
-            // Thresholding
-            Emgu.CV.Mat imgThreshold = new Emgu.CV.Mat();
-            Emgu.CV.CvInvoke.Threshold(imgBlur, imgThreshold, 0, 255, method);
-            //imgThreshold = imgBlur;
+            // Apply thresholding
+            Mat thresholded = new Mat() ;
+            double threshold_value = 190; // Example threshold value, adjust as needed
+            double max_value = 255; // Maximum pixel value in the binary image
+            ThresholdType threshold_type = Emgu.CV.CvEnum.ThresholdType.Binary; // Thresholding type (binary)
+            Emgu.CV.CvInvoke.Threshold(blurredImage, thresholded, threshold_value, max_value, threshold_type);
 
-            // Morphological operations
-            Emgu.CV.Mat imgMorph = new Emgu.CV.Mat();
-            Emgu.CV.CvInvoke.MorphologyEx(imgThreshold, imgMorph, MorphOp.Close, kernel, new Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar());
-            Emgu.CV.CvInvoke.MorphologyEx(imgMorph, imgMorph, MorphOp.Open, kernel, new Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar());
-
-            // Canny edge detection
-            Emgu.CV.Mat imgCanny = new Emgu.CV.Mat();
-            Emgu.CV.CvInvoke.Canny(imgMorph, imgCanny, 1, 255);
-
-            // Dilation
-            Emgu.CV.Mat dilated = new Emgu.CV.Mat();
-            Emgu.CV.CvInvoke.Dilate(imgCanny, dilated, kernel, new Point(-1, -1), 2, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar());
-
-            return dilated;
+            return thresholded;
         }
-        public static (Dictionary<int, int>, Dictionary<int, Mat>) Recognize(Emgu.CV.Mat img)
+        public static Dictionary<int,int> Recognize(Emgu.CV.Mat img)
         {
             // Blob detection parameters
             double minThreshold = 50;
@@ -288,29 +363,32 @@ namespace YahtzeeAPI.Recognition
 
             Emgu.CV.Mat kernel = Emgu.CV.CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
 
-            Emgu.CV.Mat output = ProcessImage(img, 0.1, kernel, Emgu.CV.CvEnum.ThresholdType.Binary | Emgu.CV.CvEnum.ThresholdType.Otsu);
+            Emgu.CV.Mat output = ProcessImage(img, 0.5, kernel, Emgu.CV.CvEnum.ThresholdType.Binary | Emgu.CV.CvEnum.ThresholdType.Otsu);
+
+            //// Display the Mat object in a window
+            //CvInvoke.Imshow("Image Window", output);
+            //// Wait for a key press before closing the window
+            //CvInvoke.WaitKey(0);
 
             Emgu.CV.Mat resultImage = img.Clone();
             List<Emgu.CV.Mat> dices = new List<Emgu.CV.Mat>();
             List<Point> positions = new List<Point>();
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
-
-            (dices, positions) = GetContours(ref output, ref resultImage);
+            double contourWidth;
+            (dices, positions, contourWidth) = GetContours(ref output, ref resultImage);
             totalDices = dices.Count;
-
 
             if (totalDices == 0 || totalDices == 1)
             {
-                output = ProcessImage(img, 0.2, kernel, Emgu.CV.CvEnum.ThresholdType.Mask); //TODO: experiment with various Threshold types
+                output = ProcessImage(img, 0.2, kernel, Emgu.CV.CvEnum.ThresholdType.Triangle);
                 resultImage = img.Clone();
-                (dices, positions) = GetContours(ref output, ref resultImage);
+                (dices, positions, contourWidth) = GetContours(ref output, ref resultImage);
                 totalDices = dices.Count;
             }
 
             Emgu.CV.CvInvoke.PutText(resultImage, "Number of dices: " + totalDices, new Point(30, 30), Emgu.CV.CvEnum.FontFace.HersheyComplex, 1, new MCvScalar(0, 0, 255), 2);
             List<Emgu.CV.Mat> filteredDices = new List<Emgu.CV.Mat>();
-            Dictionary<int, int> dicesDIctionary = new Dictionary<int, int>();
-            Dictionary<int, Mat> dicesImages = new Dictionary<int, Mat>();
+            Dictionary<int, int> dicesDict = new Dictionary<int, int>();
 
             if (totalDices > 0)
             {
@@ -318,18 +396,26 @@ namespace YahtzeeAPI.Recognition
                 foreach (var dice in dices)
                 {
                     diceN0++;
-                    Emgu.CV.Mat resizedDice = ResizeToSize(dice, 128);
+                    Emgu.CV.Mat resizedDice = ResizeToSize(dice, Convert.ToInt32(contourWidth));
 
                     double imgArea = resizedDice.Width * resizedDice.Height;
                     maxArea = (int)(imgArea / 2);
-                    Emgu.CV.Mat diceGamma = ApplyGamma(resizedDice, 0.6);
+                    Emgu.CV.Mat diceGamma = ApplyGamma(resizedDice, 2);
                     Emgu.CV.Mat diceMorph = new Emgu.CV.Mat();
                     Emgu.CV.CvInvoke.MorphologyEx(diceGamma, diceMorph, MorphOp.Close, kernel, new Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(0, 0, 0));
+
+                    //// Display the Mat object in a window
+                    //CvInvoke.Imshow("Image Window", diceMorph);
+                    //// Wait for a key press before closing the window
+                    //CvInvoke.WaitKey(0);
+
                     (Emgu.CV.Mat imgWithKeypoints, int number) = SimpleBlobDetection(ref diceMorph, minThreshold, maxThreshold, minArea, maxArea, minCircularity, minInertiaRatio);
 
                     if (number == 0)
                     {
                         diceGamma = ApplyGamma(resizedDice, 0.18);
+                        //Emgu.CV.CvInvoke.MorphologyEx(diceGamma,diceMorph, MorphOp.Close, kernel, new Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(0, 0, 0));
+                        //Emgu.CV.CvInvoke.MorphologyEx(diceMorph, diceMorph, MorphOp.Open, kernel, new Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(0, 0, 0));
                         (imgWithKeypoints, number) = SimpleBlobDetection(ref diceGamma, minThreshold, maxThreshold, minArea, maxArea, minCircularity, minInertiaRatio);
                     }
 
@@ -337,12 +423,39 @@ namespace YahtzeeAPI.Recognition
                     Emgu.CV.CvInvoke.PutText(resultImage, number.ToString(), positions[filteredDices.Count], Emgu.CV.CvEnum.FontFace.HersheyComplex, 1, new MCvScalar(0, 0, 255), 2);
 
                     filteredDices.Add(imgWithKeypoints);
+                    if ( number != 0 )
+                        dicesDict.Add(diceN0, number);
                     totalPips += number;
-                    dicesDIctionary.Add(diceN0, number);
-                    dicesImages.Add(diceN0, dice);
                 }
             }
-            return (dicesDIctionary, dicesImages);
+
+            if (totalPips > 0)
+            {
+                //Emgu.CV.CvInvoke.PutText(img, "Filename: " + fileName, new Point(30, 30), Emgu.CV.CvEnum.FontFace.HersheyComplex, 1, new MCvScalar(0, 0, 255), 2);
+                //Emgu.CV.Mat full = JoinImages(0.6, new List<Emgu.CV.Mat> { img, resultImage }, true);
+
+                if (filteredDices.Count > 10)
+                {
+                    //filteredDices = MakeRows(filteredDices, 10);
+                    Emgu.CV.Mat dicesImage = JoinImages(0.5, filteredDices, false);
+                    return (dicesDict);
+                }
+                else
+                {
+                    Emgu.CV.Mat dicesImage = JoinImages(0.5, filteredDices, true);
+                    return (dicesDict);
+                }
+            }
+            else
+            {
+                Emgu.CV.Mat copy = img.Clone();
+                //Emgu.CV.CvInvoke.PutText(img, "Filename: " + fileName, new Point(30, 30), Emgu.CV.CvEnum.FontFace.HersheyComplex, 1, new MCvScalar(0, 0, 255), 2);
+                Emgu.CV.CvInvoke.PutText(copy, "Number of dices: 0", new Point(30, 30), Emgu.CV.CvEnum.FontFace.HersheyComplex, 1, new MCvScalar(0, 0, 255), 2);
+                Emgu.CV.Mat blankDice = new Emgu.CV.Mat();
+                Emgu.CV.Mat full = JoinImages(0.6, new List<Emgu.CV.Mat> { img, copy }, true);
+                Emgu.CV.Mat dicesImage = JoinImages(0.5, new List<Emgu.CV.Mat> { blankDice, blankDice }, true);
+                return (dicesDict);
+            }
         }
     }
 }

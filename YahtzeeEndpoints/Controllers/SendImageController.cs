@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
@@ -43,14 +44,19 @@ namespace YahtzeeEndpoints.Controllers
                 await Request.Content.ReadAsMultipartAsync(provider);
 
                 // Get the file from the provider
-                var file = provider.FileData[0];
+                Collection<MultipartFileData> file = provider.FileData;
                 AuthenticationHeaderValue header = Request.Headers.Authorization;
                 if (UserData.UserImages.ContainsKey(header.Parameter))
                 {
-                    // Convert string to byte array using UTF-8 encoding
-                    byte[] byteArray = File.ReadAllBytes(file.LocalFileName);
-                    UserData.UserImages[header.Parameter] = byteArray;
-                    return Ok("file received");
+                    int indexN0 = 0;
+                    foreach (MultipartFileData coll in file)
+                    {
+                        // Convert string to byte array using UTF-8 encoding
+                        byte[] byteArray = File.ReadAllBytes(coll.LocalFileName);
+                        UserData.UserImages[header.Parameter + indexN0++] = byteArray;
+                    }
+                    
+                    return Ok("files received");
                 }
             }
             catch (System.Exception ex)

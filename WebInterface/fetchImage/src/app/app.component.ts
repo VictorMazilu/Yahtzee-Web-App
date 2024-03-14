@@ -16,6 +16,7 @@ export class AppComponent {
   public userLoggedIn = false;
 
   private trigger: Subject<any> = new Subject();
+  public dices:any;
 
   public webcamImage!: WebcamImage;
   private nextWebcam: Subject<any> = new Subject();
@@ -64,29 +65,39 @@ export class AppComponent {
     this.webcamImage = webcamImage;
     this.captureImage = webcamImage!.imageAsDataUrl;
 
-    const imageData = this.webcamImage.imageAsBase64;
-    const blobl = this.convertBase64ToBlob(imageData, 'image/jpeg');
-    const imageFile = new File([blobl], 'webcam_image.jpg', { type: 'image/jpeg' });
-    
+    // const imageData = this.webcamImage.imageAsBase64;
+    // const blobl = this.convertBase64ToBlob(imageData, 'image/jpeg');
+    // const imageFile = new File([blobl], 'webcam_image.jpg', { type: 'image/jpeg' });
     const formData = new FormData();
-    formData.append('image', imageFile);
+    for (let i = 0; i < 10; i++) {
+      const imageFile = this.convertBase64ToBlob(this.webcamImage.imageAsBase64, 'image/jpeg');
+      formData.append('image' + i, imageFile);
+    }
+
+
+    // const fileInput = document.getElementById('imageFile') as HTMLInputElement;
+    // const file = fileInput.files ? fileInput.files[0] : null;
+    // const formData = new FormData();
+    // if (file) {
+    //   formData.append('image', file);
+    // }
 
     const token = TokenStore.getToken();
     this.http.post<any>(prodEnvironment.apiUrl + 'sendimage', formData, {headers: new HttpHeaders({'Authorization': `Bearer ${token}` }) })
       .subscribe(
-        response => {
-          console.log('Response from server:', response);
-          this.http.get<any>(prodEnvironment.apiUrl + 'getpoints', {headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` }) })
-            .subscribe(
-              response => {
-                this.dataMap = response;
-              }, error => {
-                console.error('Error:', error);
-              });
-        },
-        error => {
+      response => {
+        console.log('Response from server:', response);
+        this.http.get<any>(prodEnvironment.apiUrl + 'getpoints', {headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` }) })
+        .subscribe(
+          response => {
+          this.dices = response.message;
+          }, error => {
           console.error('Error:', error);
-        }
+          });
+      },
+      error => {
+        console.error('Error:', error);
+      }
       );
   }
   convertBlobToDataURL(blob: Blob): String {
@@ -97,6 +108,11 @@ export class AppComponent {
     };
     reader.readAsDataURL(blob);
     return image;
+  }
+
+  getImageUrlFromBytes(imageBytes: string): string {
+    const base64Image = btoa((encodeURIComponent(imageBytes)));
+    return `data:image/jpeg;base64,${base64Image}`;
   }
   /*------------------------------------------
   --------------------------------------------
@@ -158,6 +174,35 @@ export class AppComponent {
 
     return byteArray;
   }
+
+  captureImages(webcamImage: WebcamImage): void {
+    this.webcamImage = webcamImage;
+    const formData = new FormData();
+    const token = TokenStore.getToken();
+
+    for (let i = 0; i < 10; i++) {
+      const imageFile = this.convertBase64ToBlob(this.webcamImage.imageAsBase64, 'image/jpeg');
+      formData.append('image' + i, imageFile);
+    }
+    
+    this.http.post<any>(prodEnvironment.apiUrl + 'sendimage', formData, { headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` }) })
+      .subscribe(
+        response => {
+          console.log('Response from server:', response);
+          this.http.get<any>(prodEnvironment.apiUrl + 'getpoints', { headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` }) })
+            .subscribe(
+              response => {
+                this.dices = response.message;
+              }, error => {
+                console.error('Error:', error);
+              });
+        },
+        error => {
+          console.error('Error:', error);
+        }
+      );
+  }
+
 }
 function dictSize(obj: { [key: string]: any; }): boolean {
   throw new Error('Function not implemented.');

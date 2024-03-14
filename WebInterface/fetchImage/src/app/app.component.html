@@ -7,13 +7,19 @@
   <webcam 
   [trigger]="triggerObservable" 
   (imageCapture)="handleImage($event)"
-  [height]="380" 
-  [width]="500" ></webcam>
-<div>
+  [height]="150" 
+  [width]="200" ></webcam>
+  <div>
+    <!-- <button class="btn btn-success" (click)="handleImage()">Capture Image</button>-->
   <button class="btn btn-success" (click)="triggerSnapshot();">Roll!</button>
-</div>
+  </div>
 <div>
-{{dataMap | json}}
+  <span *ngFor="let dice of dices">
+    <img [src]="'assets/dice-' + dice + '-svgrepo-com.svg'" alt="Dice Image" width="50px" height="50px">
+  </span>
 </div>
-<app-logout (userLoggedIn)="receiveMessage($event)"></app-logout>
+
+<div style="position: fixed; bottom: 0; right: 0;">
+  <app-logout (userLoggedIn)="receiveMessage($event)"></app-logout>
+</div>
 </ng-container>

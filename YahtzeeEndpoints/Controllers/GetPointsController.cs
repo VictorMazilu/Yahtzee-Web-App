@@ -27,28 +27,28 @@ namespace YahtzeeEndpoints.Controllers
             AuthenticationHeaderValue header = Request.Headers.Authorization;
             if (UserData.UserImages.ContainsKey(header.Parameter))
             {
+                Dictionary<int, Dictionary<int, int>> dicesDict = new Dictionary<int, Dictionary<int, int>>();
                 // Read the image bytes from the file
-                byte[] imageBytes = (byte[])UserData.UserImages[header.Parameter];
-                Emgu.CV.Mat processedImage = PointsUtils.ConvertToMat(imageBytes);
-                (Dictionary<int, int> dices, Dictionary<int, Mat> images) = RecognitionSystem.Recognize(processedImage);
-
-                // Convert the image bytes to a base64 string
-                Dictionary<int, Image<Bgra, byte>> finalImages = new Dictionary<int, Image<Bgra, byte>>();
-                foreach (KeyValuePair<int, Mat> image in images)
+                for (int i = 0; i < 10; i++)
                 {
-                    Image<Bgra, byte> imageProcessed = image.Value.ToImage<Bgra, byte>();
-                    //byte[] imageProcessed = PointsUtils.ConvertToByteArray(image.Value);
-                    finalImages.Add(image.Key, imageProcessed);
+                    byte[] imageBytes = (byte[])UserData.UserImages[header.Parameter + i];
+                    Emgu.CV.Mat processedImage = PointsUtils.ConvertToMat(imageBytes);
+                    Dictionary<int, int> dices = RecognitionSystem.Recognize(processedImage);
+                    dicesDict.Add(i, dices);
                 }
 
+                List<int> dicesList = new List<int>();
+                foreach (KeyValuePair<int,int> dice in dicesDict[0])
+                {
+                    dicesList.Add(dice.Value);
+                }
                 // Create the response message
                 var response = new
                 {
-                    message = "My message",
-                    imageBase64 = finalImages
+                    message = dicesList //only send the first processed output for now
                 };
 
-                return Request.CreateResponse(HttpStatusCode.OK, dices);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, new Exception("No dices for today"));
         }
