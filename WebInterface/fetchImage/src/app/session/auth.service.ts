@@ -1,8 +1,9 @@
 // auth.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { prodEnvironment } from '../../config/environment.prod';
+import TokenStore from './token'; // Import the TokenStore class
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/logout`, {});
+    const token = TokenStore.getToken(); // Use the TokenStore class
+    return this.http.post<any>(`${this.apiUrl}/logout`, {}, { headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` }) });
   }
 }

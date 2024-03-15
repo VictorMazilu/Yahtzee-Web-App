@@ -6,7 +6,8 @@ import { prodEnvironment } from '../config/environment.prod';
 import TokenStore from './session/token';
 import { consumerPollProducersForChange } from '@angular/core/primitives/signals';
 
-interface PlayerScore {
+
+export interface PlayerScore {
   playerName: string;
   onesJ: number;
   onesL: number;
@@ -76,6 +77,31 @@ interface PlayerScore {
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+
+  private history: PlayerScore[][] = [];
+  private currentIndex = -1;
+
+  addHistory(): void {
+    const snapshot = this.players.map(player => ({ ...player }));
+    this.history.splice(this.currentIndex + 1);
+    this.history.push(snapshot);
+    this.currentIndex++;
+  }
+
+  undo(): void {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      this.players = this.history[this.currentIndex].map(player => ({ ...player }));
+    }
+  }
+
+  redo(): void {
+    if (this.currentIndex < this.history.length - 1) {
+      this.currentIndex++;
+      this.players = this.history[this.currentIndex].map(player => ({ ...player }));
+    }
+  }
+
   public returnedImage: any;
   public userLoggedIn = false;
 
@@ -177,7 +203,6 @@ export class AppComponent {
         (this.players[i].totalL !== 0 ? this.players[i].totalL : 0) + (this.players[i].totalFinalL !== 0 ? this.players[i].totalFinalL : 0) +
         (this.players[i].totalS !== 0 ? this.players[i].totalS : 0) + (this.players[i].totalFinalS !== 0 ? this.players[i].totalFinalS : 0);
 
-console.log("grandj" , this.players[i].grandTotalJ);
 
         if(this.players[i].minJ !== -1 && this.players[i].maxJ !== -1) {
           this.players[i].diffJ = this.players[i].maxJ - this.players[i].minJ;
@@ -389,11 +414,12 @@ console.log("grandj" , this.players[i].grandTotalJ);
       }
     }
     this.computeTotals();
+    this.addHistory();
     
     const anchorTag = event.target as HTMLAnchorElement;
     const parentTd = anchorTag.parentElement;
-    if (parentTd) {
-      parentTd.textContent = sum.toString();
+    if (anchorTag) {
+      anchorTag.textContent = sum.toString();
     }
   }
   ones(event: any, player: number, type: string) {

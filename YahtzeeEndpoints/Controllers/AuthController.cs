@@ -2,6 +2,8 @@
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Web.Http;
@@ -27,6 +29,22 @@ namespace YahtzeeEndpoints.Controllers
             }
 
             return Unauthorized();
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        public IHttpActionResult Logout([FromBody] LoginModel model)
+        {
+            AuthenticationHeaderValue header = Request.Headers.Authorization;
+            if (UserData.UserImages.ContainsKey(header.Parameter))
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    UserData.UserImages.Remove(header.Parameter + i);
+                }
+                UserData.UserImages.Remove(header.Parameter);
+            }
+            return Ok("Log out!");
         }
 
         private string GenerateToken(string username)

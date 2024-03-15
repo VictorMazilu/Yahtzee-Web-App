@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './session/login/login.component';
 import { LogoutComponent } from './session/logout/logout.component';
 import { FormsModule } from '@angular/forms';
+import { StoreModule } from '@ngrx/store';
 
 
 @NgModule({

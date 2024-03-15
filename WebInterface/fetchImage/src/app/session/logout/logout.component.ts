@@ -14,8 +14,18 @@ export class LogoutComponent {
   constructor(private authService: AuthService) { }
 
   logout(): void {
-    TokenStore.clearToken();
-    this.userLoggedIn.emit(false);
-    console.log('Logged out successfully.');
+    this.authService.logout().subscribe(
+      response => {
+        // Handle successful logout
+
+        TokenStore.clearToken();
+        this.userLoggedIn.emit(false);
+        console.log('Logged out successfully.');
+      },
+      error => {
+        // Handle Logout error
+        console.error('Logout error:', error);
+      }
+    );
   }
 }
