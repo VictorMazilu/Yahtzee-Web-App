@@ -1,3 +1,11 @@
+<div *ngIf="loading">
+<div class="all"></div>   
+<div class="circle"></div>
+<div class="circle"></div>
+<div class="circle"></div>
+<span>Loading</span>
+</div>
+
 <ng-container *ngIf="!userLoggedIn">
   <app-login (userLoggedIn)="receiveMessage($event)"></app-login>
 </ng-container>
@@ -8,8 +16,10 @@
   <div>
     <button class="btn btn-success button-15" role="button" (click)="triggerSnapshot();">Roll!</button>
   </div>
+  <div class="wrapper" *ngIf="loading">
 
-  <div class="dicesDiv">
+</div>
+  <div class="dicesDiv" *ngIf="!loading">
     <span *ngFor="let dice of dices">
       <img [src]="'assets/dice-' + dice + '-svgrepo-com.svg'" alt="Dice Image" width="50px" height="50px">
     </span>

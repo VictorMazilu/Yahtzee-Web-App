@@ -78,6 +78,7 @@ export interface PlayerScore {
 })
 export class AppComponent {
 
+  public loading = false;
   private history: PlayerScore[][] = [];
   private currentIndex = -1;
 
@@ -731,6 +732,7 @@ export class AppComponent {
     // }
 
     const token = TokenStore.getToken();
+    this.loading = true;
     this.http.post<any>(prodEnvironment.apiUrl + 'sendimage', formData, { headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` }) })
       .subscribe(
         response => {
@@ -739,11 +741,14 @@ export class AppComponent {
             .subscribe(
               response => {
                 this.dices = response.message;
+                this.loading = false;
               }, error => {
                 console.error('Error:', error);
+                this.loading = false;
               });
         },
         error => {
+          this.loading = false;
           console.error('Error:', error);
         }
       );
