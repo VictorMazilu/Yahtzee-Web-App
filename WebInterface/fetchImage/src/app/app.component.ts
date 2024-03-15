@@ -177,6 +177,8 @@ export class AppComponent {
         (this.players[i].totalL !== 0 ? this.players[i].totalL : 0) + (this.players[i].totalFinalL !== 0 ? this.players[i].totalFinalL : 0) +
         (this.players[i].totalS !== 0 ? this.players[i].totalS : 0) + (this.players[i].totalFinalS !== 0 ? this.players[i].totalFinalS : 0);
 
+console.log("grandj" , this.players[i].grandTotalJ);
+
         if(this.players[i].minJ !== -1 && this.players[i].maxJ !== -1) {
           this.players[i].diffJ = this.players[i].maxJ - this.players[i].minJ;
         }
