@@ -49,6 +49,16 @@
       color: #000000;
       padding: 5px;
     }
+
+    .blackbgr{
+      background-color:rgba(0, 0, 0, 0.95);
+      color: #ffffff;
+    }
+
+    .redbgr{
+      background-color:rgba(94, 255, 0, 0.95);
+      color: #ffffff;
+    }
   </style>
   <div class="table_component" role="region" tabindex="0">
     <table>
@@ -168,36 +178,36 @@
           <td><a href="#" (click)="sixes($event, 3, 'S')" [innerText]="players[3].sixesS !== -1 ? players[3].sixesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
         </tr>
 
-        <tr>
+        <tr class="blackbgr">
           <td>TOTAL</td>
           
-          <td>{{totaltmpJ(1, 'J')}}</td>
-          <td>{{totaltmpJ(1 ,'L')}}</td>
-          <td>{{totaltmpJ(1, 'S')}}</td>
-          <td>{{totaltmpJ(2, 'J')}}</td>
-          <td>{{totaltmpJ(2, 'L')}}</td>
-          <td>{{totaltmpJ(2, 'S')}}</td>
-          <td>{{totaltmpJ(3, 'J')}}</td>
-          <td>{{totaltmpJ(3, 'L')}}</td>
-          <td>{{totaltmpJ(3, 'S')}}</td>
-          <td>{{totaltmpJ(4, 'J')}}</td>
-          <td>{{totaltmpJ(4, 'L')}}</td>
-          <td>{{totaltmpJ(4, 'S')}}</td>
+          <td><b>{{totaltmpJ(1, 'J')}}</b></td>
+          <td><b>{{totaltmpJ(1 ,'L')}}</b></td>
+          <td><b>{{totaltmpJ(1, 'S')}}</b></td>
+          <td><b>{{totaltmpJ(2, 'J')}}</b></td>
+          <td><b>{{totaltmpJ(2, 'L')}}</b></td>
+          <td><b>{{totaltmpJ(2, 'S')}}</b></td>
+          <td><b>{{totaltmpJ(3, 'J')}}</b></td>
+          <td><b>{{totaltmpJ(3, 'L')}}</b></td>
+          <td><b>{{totaltmpJ(3, 'S')}}</b></td>
+          <td><b>{{totaltmpJ(4, 'J')}}</b></td>
+          <td><b>{{totaltmpJ(4, 'L')}}</b></td>
+          <td><b>{{totaltmpJ(4, 'S')}}</b></td>
         </tr>
-        <tr>
+        <tr class="blackbgr">
           <td>DOUBLE</td>
-          <td>{{double(1, 'J')}}</td>
-          <td>{{double(1 ,'L')}}</td>
-          <td>{{double(1, 'S')}}</td>
-          <td>{{double(2, 'J')}}</td>
-          <td>{{double(2, 'L')}}</td>
-          <td>{{double(2, 'S')}}</td>
-          <td>{{double(3, 'J')}}</td>
-          <td>{{double(3, 'L')}}</td>
-          <td>{{double(3, 'S')}}</td>
-          <td>{{double(4, 'J')}}</td>
-          <td>{{double(4, 'L')}}</td>
-          <td>{{double(4, 'S')}}</td>
+          <td><b>{{double(1, 'J')}}</b></td>
+          <td><b>{{double(1 ,'L')}}</b></td>
+          <td><b>{{double(1, 'S')}}</b></td>
+          <td><b>{{double(2, 'J')}}</b></td>
+          <td><b>{{double(2, 'L')}}</b></td>
+          <td><b>{{double(2, 'S')}}</b></td>
+          <td><b>{{double(3, 'J')}}</b></td>
+          <td><b>{{double(3, 'L')}}</b></td>
+          <td><b>{{double(3, 'S')}}</b></td>
+          <td><b>{{double(4, 'J')}}</b></td>
+          <td><b>{{double(4, 'L')}}</b></td>
+          <td><b>{{double(4, 'S')}}</b></td>
         </tr>
 
         <tr>
@@ -339,36 +349,36 @@
           <td><a href="#" (click)="min($event, 3, 'S')" [innerText]="players[3].minS !== -1 ? players[3].minS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
         </tr>
         <tr>
-          <td>DIFF</td>
-          <td>{{diff(1, 'J')}}</td>
-          <td>{{diff(1 ,'L')}}</td>
-          <td>{{diff(1, 'S')}}</td>
-          <td>{{diff(2, 'J')}}</td>
-          <td>{{diff(2, 'L')}}</td>
-          <td>{{diff(2, 'S')}}</td>
-          <td>{{diff(3, 'J')}}</td>
-          <td>{{diff(3, 'L')}}</td>
-          <td>{{diff(3, 'S')}}</td>
-          <td>{{diff(4, 'J')}}</td>
-          <td>{{diff(4, 'L')}}</td>
-          <td>{{diff(4, 'S')}}</td>
+          <td class="blackbgr">DIFF</td>
+          <td><b>{{diff(1, 'J')}}</b></td>
+          <td><b>{{diff(1 ,'L')}}</b></td>
+          <td><b>{{diff(1, 'S')}}</b></td>
+          <td><b>{{diff(2, 'J')}}</b></td>
+          <td><b>{{diff(2, 'L')}}</b></td>
+          <td><b>{{diff(2, 'S')}}</b></td>
+          <td><b>{{diff(3, 'J')}}</b></td>
+          <td><b>{{diff(3, 'L')}}</b></td>
+          <td><b>{{diff(3, 'S')}}</b></td>
+          <td><b>{{diff(4, 'J')}}</b></td>
+          <td><b>{{diff(4, 'L')}}</b></td>
+          <td><b>{{diff(4, 'S')}}</b></td>
         </tr>
-        <tr>
+        <tr class="blackbgr">
           <td>TOTAL</td>
-          <td>{{totalFinal(1, 'J')}}</td>
-          <td>{{totalFinal(1 ,'L')}}</td>
-          <td>{{totalFinal(1, 'S')}}</td>
-          <td>{{totalFinal(2, 'J')}}</td>
-          <td>{{totalFinal(2, 'L')}}</td>
-          <td>{{totalFinal(2, 'S')}}</td>
-          <td>{{totalFinal(3, 'J')}}</td>
-          <td>{{totalFinal(3, 'L')}}</td>
-          <td>{{totalFinal(3, 'S')}}</td>
-          <td>{{totalFinal(4, 'J')}}</td>
-          <td>{{totalFinal(4, 'L')}}</td>
-          <td>{{totalFinal(4, 'S')}}</td>
+          <td><b>{{totalFinal(1, 'J')}}</b></td>
+          <td><b>{{totalFinal(1 ,'L')}}</b></td>
+          <td><b>{{totalFinal(1, 'S')}}</b></td>
+          <td><b>{{totalFinal(2, 'J')}}</b></td>
+          <td><b>{{totalFinal(2, 'L')}}</b></td>
+          <td><b>{{totalFinal(2, 'S')}}</b></td>
+          <td><b>{{totalFinal(3, 'J')}}</b></td>
+          <td><b>{{totalFinal(3, 'L')}}</b></td>
+          <td><b>{{totalFinal(3, 'S')}}</b></td>
+          <td><b>{{totalFinal(4, 'J')}}</b></td>
+          <td><b>{{totalFinal(4, 'L')}}</b></td>
+          <td><b>{{totalFinal(4, 'S')}}</b></td>
         </tr>
-        <tr>
+        <tr class="redbgr">
           <td>GRAND TOTAL</td>
           <td colspan="3">{{grandTotal(1, 'J')}}</td>
           <td colspan="3">{{grandTotal(2, 'J')}}</td>
