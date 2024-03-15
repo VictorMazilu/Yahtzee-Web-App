@@ -126,8 +126,8 @@ namespace YahtzeeAPI.Recognition
                             int width = (int)rect.Size.Width;
                             int height = (int)rect.Size.Height;
 
-                            if (Math.Abs(width - height) <= 40)
-                            {
+                            //if (Math.Abs(width - height) <= 40)
+                            //{
                                 PointF[] sourcePoints = box;
                                 PointF[] targetPoints = new PointF[]
                                 {
@@ -161,7 +161,7 @@ namespace YahtzeeAPI.Recognition
 
                                 //    Emgu.CV.CvInvoke.DrawContours(drawImg, contours, i, new MCvScalar(0, 255, 0), 2);
                                 //}
-                            }
+                            //}
                         }
                     }
                 }

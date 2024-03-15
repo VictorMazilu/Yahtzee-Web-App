@@ -1,25 +1,393 @@
-
 <ng-container *ngIf="!userLoggedIn">
   <app-login (userLoggedIn)="receiveMessage($event)"></app-login>
 </ng-container>
 
 <ng-container *ngIf="userLoggedIn">
-  <webcam 
-  [trigger]="triggerObservable" 
-  (imageCapture)="handleImage($event)"
-  [height]="150" 
-  [width]="200" ></webcam>
+  <webcam hidden [trigger]="triggerObservable" (imageCapture)="handleImage($event)" [height]="150" [width]="200"></webcam>
   <div>
-    <!-- <button class="btn btn-success" (click)="handleImage()">Capture Image</button>-->
-  <button class="btn btn-success" (click)="triggerSnapshot();">Roll!</button>
+    <button class="btn btn-success" (click)="triggerSnapshot();">Roll!</button>
   </div>
-<div>
-  <span *ngFor="let dice of dices">
-    <img [src]="'assets/dice-' + dice + '-svgrepo-com.svg'" alt="Dice Image" width="50px" height="50px">
-  </span>
-</div>
 
-<div style="position: fixed; bottom: 0; right: 0;">
-  <app-logout (userLoggedIn)="receiveMessage($event)"></app-logout>
-</div>
+  <div class="dicesDiv">
+    <span *ngFor="let dice of dices">
+      <img [src]="'assets/dice-' + dice + '-svgrepo-com.svg'" alt="Dice Image" width="50px" height="50px">
+    </span>
+  </div>
+
+  <style>
+    .table_component {
+      overflow: auto;
+      width: 100%;
+      
+    }
+
+    .table_component table {
+      border: 1px solid #000000;
+      height: 100%;
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      border-spacing: 1px;
+      text-align: center;
+    }
+
+    .table_component caption {
+      caption-side: top;
+      text-align: center;
+    }
+
+    .table_component th {
+      border: 1px solid #000000;
+      background-color:rgba(255, 255, 255, 0.95);
+      color: #000000;
+      padding: 5px;
+    }
+
+    .table_component td {
+      border: 1px solid #000000;
+      background-color:rgba(255, 255, 255, 0.95);
+      color: #000000;
+      padding: 5px;
+    }
+  </style>
+  <div class="table_component" role="region" tabindex="0">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+
+          <th><input type="text" [value]="player1.playerName"></th>
+
+          <th></th>
+          <th></th>
+          <th><input type="text" [value]="player2.playerName"></th>
+          <th></th>
+          <th></th>
+          <th><input type="text" [value]="player3.playerName"></th>
+          <th></th>
+          <th></th>
+          <th><input type="text" [value]="player4.playerName"></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th></th>
+          <th>J</th>
+          <th>L</th>
+          <th>S</th>
+          <th>J</th>
+          <th>L</th>
+          <th>S</th>
+          <th>J</th>
+          <th>L</th>
+          <th>S</th>
+          <th>J</th>
+          <th>L</th>
+          <th>S</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td><a href="#" (click)="ones($event, 0, 'J')" [innerText]="players[0].onesJ !== -1 ? players[0].onesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 0, 'L')" [innerText]="players[0].onesL !== -1 ? players[0].onesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 0, 'S')" [innerText]="players[0].onesS !== -1 ? players[0].onesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 1, 'J')" [innerText]="players[1].onesJ !== -1 ? players[1].onesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 1, 'L')" [innerText]="players[1].onesL !== -1 ? players[1].onesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 1, 'S')" [innerText]="players[1].onesS !== -1 ? players[1].onesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 2, 'J')" [innerText]="players[2].onesJ !== -1 ? players[2].onesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 2, 'L')" [innerText]="players[2].onesL !== -1 ? players[2].onesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 2, 'S')" [innerText]="players[2].onesS !== -1 ? players[2].onesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 3, 'J')" [innerText]="players[3].onesJ !== -1 ? players[3].onesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 3, 'L')" [innerText]="players[3].onesL !== -1 ? players[3].onesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+            <td><a href="#" (click)="ones($event, 3, 'S')" [innerText]="players[3].onesS !== -1 ? players[3].onesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><a href="#" (click)="twos($event, 0, 'J')" [innerText]="players[0].twosJ !== -1 ? players[0].twosJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 0, 'L')" [innerText]="players[0].twosL !== -1 ? players[0].twosL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 0, 'S')" [innerText]="players[0].twosS !== -1 ? players[0].twosS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 1, 'J')" [innerText]="players[1].twosJ !== -1 ? players[1].twosJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 1, 'L')" [innerText]="players[1].twosL !== -1 ? players[1].twosL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 1, 'S')" [innerText]="players[1].twosS !== -1 ? players[1].twosS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 2, 'J')" [innerText]="players[2].twosJ !== -1 ? players[2].twosJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 2, 'L')" [innerText]="players[2].twosL !== -1 ? players[2].twosL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 2, 'S')" [innerText]="players[2].twosS !== -1 ? players[2].twosS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 3, 'J')" [innerText]="players[3].twosJ !== -1 ? players[3].twosJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 3, 'L')" [innerText]="players[3].twosL !== -1 ? players[3].twosL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twos($event, 3, 'S')" [innerText]="players[3].twosS !== -1 ? players[3].twosS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><a href="#" (click)="threes($event, 0, 'J')" [innerText]="players[0].threesJ !== -1 ? players[0].threesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 0, 'L')" [innerText]="players[0].threesL !== -1 ? players[0].threesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 0, 'S')" [innerText]="players[0].threesS !== -1 ? players[0].threesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 1, 'J')" [innerText]="players[1].threesJ !== -1 ? players[1].threesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 1, 'L')" [innerText]="players[1].threesL !== -1 ? players[1].threesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 1, 'S')" [innerText]="players[1].threesS !== -1 ? players[1].threesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 2, 'J')" [innerText]="players[2].threesJ !== -1 ? players[2].threesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 2, 'L')" [innerText]="players[2].threesL !== -1 ? players[2].threesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 2, 'S')" [innerText]="players[2].threesS !== -1 ? players[2].threesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 3, 'J')" [innerText]="players[3].threesJ !== -1 ? players[3].threesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 3, 'L')" [innerText]="players[3].threesL !== -1 ? players[3].threesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threes($event, 3, 'S')" [innerText]="players[3].threesS !== -1 ? players[3].threesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        <tr>
+          <td>4</td>
+          <td><a href="#" (click)="fours($event, 0, 'J')" [innerText]="players[0].foursJ !== -1 ? players[0].foursJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 0, 'L')" [innerText]="players[0].foursL !== -1 ? players[0].foursL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 0, 'S')" [innerText]="players[0].foursS !== -1 ? players[0].foursS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 1, 'J')" [innerText]="players[1].foursJ !== -1 ? players[1].foursJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 1, 'L')" [innerText]="players[1].foursL !== -1 ? players[1].foursL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 1, 'S')" [innerText]="players[1].foursS !== -1 ? players[1].foursS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 2, 'J')" [innerText]="players[2].foursJ !== -1 ? players[2].foursJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 2, 'L')" [innerText]="players[2].foursL !== -1 ? players[2].foursL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 2, 'S')" [innerText]="players[2].foursS !== -1 ? players[2].foursS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 3, 'J')" [innerText]="players[3].foursJ !== -1 ? players[3].foursJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 3, 'L')" [innerText]="players[3].foursL !== -1 ? players[3].foursL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fours($event, 3, 'S')" [innerText]="players[3].foursS !== -1 ? players[3].foursS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><a href="#" (click)="fives($event, 0, 'J')" [innerText]="players[0].fivesJ !== -1 ? players[0].fivesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 0, 'L')" [innerText]="players[0].fivesL !== -1 ? players[0].fivesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 0, 'S')" [innerText]="players[0].fivesS !== -1 ? players[0].fivesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 1, 'J')" [innerText]="players[1].fivesJ !== -1 ? players[1].fivesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 1, 'L')" [innerText]="players[1].fivesL !== -1 ? players[1].fivesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 1, 'S')" [innerText]="players[1].fivesS !== -1 ? players[1].fivesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 2, 'J')" [innerText]="players[2].fivesJ !== -1 ? players[2].fivesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 2, 'L')" [innerText]="players[2].fivesL !== -1 ? players[2].fivesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 2, 'S')" [innerText]="players[2].fivesS !== -1 ? players[2].fivesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 3, 'J')" [innerText]="players[3].fivesJ !== -1 ? players[3].fivesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 3, 'L')" [innerText]="players[3].fivesL !== -1 ? players[3].fivesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="fives($event, 3, 'S')" [innerText]="players[3].fivesS !== -1 ? players[3].fivesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><a href="#" (click)="sixes($event, 0, 'J')" [innerText]="players[0].sixesJ !== -1 ? players[0].sixesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 0, 'L')" [innerText]="players[0].sixesL !== -1 ? players[0].sixesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 0, 'S')" [innerText]="players[0].sixesS !== -1 ? players[0].sixesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 1, 'J')" [innerText]="players[1].sixesJ !== -1 ? players[1].sixesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 1, 'L')" [innerText]="players[1].sixesL !== -1 ? players[1].sixesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 1, 'S')" [innerText]="players[1].sixesS !== -1 ? players[1].sixesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 2, 'J')" [innerText]="players[2].sixesJ !== -1 ? players[2].sixesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 2, 'L')" [innerText]="players[2].sixesL !== -1 ? players[2].sixesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 2, 'S')" [innerText]="players[2].sixesS !== -1 ? players[2].sixesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 3, 'J')" [innerText]="players[3].sixesJ !== -1 ? players[3].sixesJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 3, 'L')" [innerText]="players[3].sixesL !== -1 ? players[3].sixesL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="sixes($event, 3, 'S')" [innerText]="players[3].sixesS !== -1 ? players[3].sixesS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+
+        <tr>
+          <td>TOTAL</td>
+          
+          <td>{{totaltmpJ(1, 'J')}}</td>
+          <td>{{totaltmpJ(1 ,'L')}}</td>
+          <td>{{totaltmpJ(1, 'S')}}</td>
+          <td>{{totaltmpJ(2, 'J')}}</td>
+          <td>{{totaltmpJ(2, 'L')}}</td>
+          <td>{{totaltmpJ(2, 'S')}}</td>
+          <td>{{totaltmpJ(3, 'J')}}</td>
+          <td>{{totaltmpJ(3, 'L')}}</td>
+          <td>{{totaltmpJ(3, 'S')}}</td>
+          <td>{{totaltmpJ(4, 'J')}}</td>
+          <td>{{totaltmpJ(4, 'L')}}</td>
+          <td>{{totaltmpJ(4, 'S')}}</td>
+        </tr>
+        <tr>
+          <td>DOUBLE</td>
+          <td>{{double(1, 'J')}}</td>
+          <td>{{double(1 ,'L')}}</td>
+          <td>{{double(1, 'S')}}</td>
+          <td>{{double(2, 'J')}}</td>
+          <td>{{double(2, 'L')}}</td>
+          <td>{{double(2, 'S')}}</td>
+          <td>{{double(3, 'J')}}</td>
+          <td>{{double(3, 'L')}}</td>
+          <td>{{double(3, 'S')}}</td>
+          <td>{{double(4, 'J')}}</td>
+          <td>{{double(4, 'L')}}</td>
+          <td>{{double(4, 'S')}}</td>
+        </tr>
+
+        <tr>
+          <td>1P</td>
+          <td><a href="#" (click)="onepoint($event, 0,'J')" [innerText]="players[0].onepointJ !== -1 ? players[0].onepointJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 0,'L')" [innerText]="players[0].onepointL !== -1 ? players[0].onepointL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 0,'S')" [innerText]="players[0].onepointS !== -1 ? players[0].onepointS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 1,'J')" [innerText]="players[1].onepointJ !== -1 ? players[1].onepointJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 1,'L')" [innerText]="players[1].onepointL !== -1 ? players[1].onepointL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 1,'S')" [innerText]="players[1].onepointS !== -1 ? players[1].onepointS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 2,'J')" [innerText]="players[2].onepointJ !== -1 ? players[2].onepointJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 2,'L')" [innerText]="players[2].onepointL !== -1 ? players[2].onepointL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 2,'S')" [innerText]="players[2].onepointS !== -1 ? players[2].onepointS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 3,'J')" [innerText]="players[3].onepointJ !== -1 ? players[3].onepointJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 3,'L')" [innerText]="players[3].onepointL !== -1 ? players[3].onepointL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="onepoint($event, 3,'S')" [innerText]="players[3].onepointS !== -1 ? players[3].onepointS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          
+        </tr>
+        <tr>
+          <td>2P</td>
+          <td><a href="#" (click)="twopoints($event, 0,'J')" [innerText]="players[0].twopointsJ !== -1 ? players[0].twopointsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 0,'L')" [innerText]="players[0].twopointsL !== -1 ? players[0].twopointsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 0,'S')" [innerText]="players[0].twopointsS !== -1 ? players[0].twopointsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 1,'J')" [innerText]="players[1].twopointsJ !== -1 ? players[1].twopointsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 1,'L')" [innerText]="players[1].twopointsL !== -1 ? players[1].twopointsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 1,'S')" [innerText]="players[1].twopointsS !== -1 ? players[1].twopointsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 2,'J')" [innerText]="players[2].twopointsJ !== -1 ? players[2].twopointsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 2,'L')" [innerText]="players[2].twopointsL !== -1 ? players[2].twopointsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 2,'S')" [innerText]="players[2].twopointsS !== -1 ? players[2].twopointsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 3,'J')" [innerText]="players[3].twopointsJ !== -1 ? players[3].twopointsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 3,'L')" [innerText]="players[3].twopointsL !== -1 ? players[3].twopointsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="twopoints($event, 3,'S')" [innerText]="players[3].twopointsS !== -1 ? players[3].twopointsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>3P+10</td>
+          <td><a href="#" (click)="threepcs($event, 0,'J')" [innerText]="players[0].threepcsJ !== -1 ? players[0].threepcsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 0,'L')" [innerText]="players[0].threepcsL !== -1 ? players[0].threepcsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 0,'S')" [innerText]="players[0].threepcsS !== -1 ? players[0].threepcsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 1,'J')" [innerText]="players[1].threepcsJ !== -1 ? players[1].threepcsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 1,'L')" [innerText]="players[1].threepcsL !== -1 ? players[1].threepcsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 1,'S')" [innerText]="players[1].threepcsS !== -1 ? players[1].threepcsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 2,'J')" [innerText]="players[2].threepcsJ !== -1 ? players[2].threepcsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 2,'L')" [innerText]="players[2].threepcsL !== -1 ? players[2].threepcsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 2,'S')" [innerText]="players[2].threepcsS !== -1 ? players[2].threepcsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 3,'J')" [innerText]="players[3].threepcsJ !== -1 ? players[3].threepcsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 3,'L')" [innerText]="players[3].threepcsL !== -1 ? players[3].threepcsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="threepcs($event, 3,'S')" [innerText]="players[3].threepcsS !== -1 ? players[3].threepcsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        
+        <tr>
+          <td>Q+20</td>
+          <td><a href="#" (click)="quinta($event, 0,'J')" [innerText]="players[0].quintaJ !== -1 ? players[0].quintaJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 0,'L')" [innerText]="players[0].quintaL !== -1 ? players[0].quintaL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 0,'S')" [innerText]="players[0].quintaS !== -1 ? players[0].quintaS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 1,'J')" [innerText]="players[1].quintaJ !== -1 ? players[1].quintaJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 1,'L')" [innerText]="players[1].quintaL !== -1 ? players[1].quintaL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 1,'S')" [innerText]="players[1].quintaS !== -1 ? players[1].quintaS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 2,'J')" [innerText]="players[2].quintaJ !== -1 ? players[2].quintaJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 2,'L')" [innerText]="players[2].quintaL !== -1 ? players[2].quintaL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 2,'S')" [innerText]="players[2].quintaS !== -1 ? players[2].quintaS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 3,'J')" [innerText]="players[3].quintaJ !== -1 ? players[3].quintaJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 3,'L')" [innerText]="players[3].quintaL !== -1 ? players[3].quintaL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="quinta($event, 3,'S')" [innerText]="players[3].quintaS !== -1 ? players[3].quintaS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>F+30</td>
+          <td><a href="#" (click)="full($event, 0,'J')" [innerText]="players[0].fullJ !== -1 ? players[0].fullJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 0,'L')" [innerText]="players[0].fullL !== -1 ? players[0].fullL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 0,'S')" [innerText]="players[0].fullS !== -1 ? players[0].fullS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 1,'J')" [innerText]="players[1].fullJ !== -1 ? players[1].fullJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 1,'L')" [innerText]="players[1].fullL !== -1 ? players[1].fullL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 1,'S')" [innerText]="players[1].fullS !== -1 ? players[1].fullS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 2,'J')" [innerText]="players[2].fullJ !== -1 ? players[2].fullJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 2,'L')" [innerText]="players[2].fullL !== -1 ? players[2].fullL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 2,'S')" [innerText]="players[2].fullS !== -1 ? players[2].fullS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 3,'J')" [innerText]="players[3].fullJ !== -1 ? players[3].fullJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 3,'L')" [innerText]="players[3].fullL !== -1 ? players[3].fullL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="full($event, 3,'S')" [innerText]="players[3].fullS !== -1 ? players[3].fullS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>K+40</td>
+          <td><a href="#" (click)="kareu($event, 0,'J')" [innerText]="players[0].kareuJ !== -1 ? players[0].kareuJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 0,'L')" [innerText]="players[0].kareuL !== -1 ? players[0].kareuL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 0,'S')" [innerText]="players[0].kareuS !== -1 ? players[0].kareuS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 1,'J')" [innerText]="players[1].kareuJ !== -1 ? players[1].kareuJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 1,'L')" [innerText]="players[1].kareuL !== -1 ? players[1].kareuL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 1,'S')" [innerText]="players[1].kareuS !== -1 ? players[1].kareuS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 2,'J')" [innerText]="players[2].kareuJ !== -1 ? players[2].kareuJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 2,'L')" [innerText]="players[2].kareuL !== -1 ? players[2].kareuL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 2,'S')" [innerText]="players[2].kareuS !== -1 ? players[2].kareuS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 3,'J')" [innerText]="players[3].kareuJ !== -1 ? players[3].kareuJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 3,'L')" [innerText]="players[3].kareuL !== -1 ? players[3].kareuL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="kareu($event, 3,'S')" [innerText]="players[3].kareuS !== -1 ? players[3].kareuS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>Y+50</td>
+          <td><a href="#" (click)="yams($event, 0,'J')" [innerText]="players[0].yamsJ !== -1 ? players[0].yamsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 0,'L')" [innerText]="players[0].yamsL !== -1 ? players[0].yamsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 0,'S')" [innerText]="players[0].yamsS !== -1 ? players[0].yamsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 1,'J')" [innerText]="players[1].yamsJ !== -1 ? players[1].yamsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 1,'L')" [innerText]="players[1].yamsL !== -1 ? players[1].yamsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 1,'S')" [innerText]="players[1].yamsS !== -1 ? players[1].yamsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 2,'J')" [innerText]="players[2].yamsJ !== -1 ? players[2].yamsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 2,'L')" [innerText]="players[2].yamsL !== -1 ? players[2].yamsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 2,'S')" [innerText]="players[2].yamsS !== -1 ? players[2].yamsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 3,'J')" [innerText]="players[3].yamsJ !== -1 ? players[3].yamsJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 3,'L')" [innerText]="players[3].yamsL !== -1 ? players[3].yamsL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="yams($event, 3,'S')" [innerText]="players[3].yamsS !== -1 ? players[3].yamsS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        
+        <tr>
+          <td>MAX</td>
+          <td><a href="#" (click)="max($event, 0, 'J')" [innerText]="players[0].maxJ !== -1 ? players[0].maxJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 0, 'L')" [innerText]="players[0].maxL !== -1 ? players[0].maxL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 0, 'S')" [innerText]="players[0].maxS !== -1 ? players[0].maxS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 1, 'J')" [innerText]="players[1].maxJ !== -1 ? players[1].maxJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 1, 'L')" [innerText]="players[1].maxL !== -1 ? players[1].maxL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 1, 'S')" [innerText]="players[1].maxS !== -1 ? players[1].maxS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 2, 'J')" [innerText]="players[2].maxJ !== -1 ? players[2].maxJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 2, 'L')" [innerText]="players[2].maxL !== -1 ? players[2].maxL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 2, 'S')" [innerText]="players[2].maxS !== -1 ? players[2].maxS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 3, 'J')" [innerText]="players[3].maxJ !== -1 ? players[3].maxJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 3, 'L')" [innerText]="players[3].maxL !== -1 ? players[3].maxL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="max($event, 3, 'S')" [innerText]="players[3].maxS !== -1 ? players[3].maxS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>MIN</td>
+          <td><a href="#" (click)="min($event, 0, 'J')" [innerText]="players[0].minJ !== -1 ? players[0].minJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 0, 'L')" [innerText]="players[0].minL !== -1 ? players[0].minL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 0, 'S')" [innerText]="players[0].minS !== -1 ? players[0].minS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 1, 'J')" [innerText]="players[1].minJ !== -1 ? players[1].minJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 1, 'L')" [innerText]="players[1].minL !== -1 ? players[1].minL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 1, 'S')" [innerText]="players[1].minS !== -1 ? players[1].minS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 2, 'J')" [innerText]="players[2].minJ !== -1 ? players[2].minJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 2, 'L')" [innerText]="players[2].minL !== -1 ? players[2].minL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 2, 'S')" [innerText]="players[2].minS !== -1 ? players[2].minS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 3, 'J')" [innerText]="players[3].minJ !== -1 ? players[3].minJ : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 3, 'L')" [innerText]="players[3].minL !== -1 ? players[3].minL : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+          <td><a href="#" (click)="min($event, 3, 'S')" [innerText]="players[3].minS !== -1 ? players[3].minS : '' " style="display: block; width: 100%; height: 100%;"></a></td>
+        </tr>
+        <tr>
+          <td>DIFF</td>
+          <td>{{diff(1, 'J')}}</td>
+          <td>{{diff(1 ,'L')}}</td>
+          <td>{{diff(1, 'S')}}</td>
+          <td>{{diff(2, 'J')}}</td>
+          <td>{{diff(2, 'L')}}</td>
+          <td>{{diff(2, 'S')}}</td>
+          <td>{{diff(3, 'J')}}</td>
+          <td>{{diff(3, 'L')}}</td>
+          <td>{{diff(3, 'S')}}</td>
+          <td>{{diff(4, 'J')}}</td>
+          <td>{{diff(4, 'L')}}</td>
+          <td>{{diff(4, 'S')}}</td>
+        </tr>
+        <tr>
+          <td>TOTAL</td>
+          <td>{{totalFinal(1, 'J')}}</td>
+          <td>{{totalFinal(1 ,'L')}}</td>
+          <td>{{totalFinal(1, 'S')}}</td>
+          <td>{{totalFinal(2, 'J')}}</td>
+          <td>{{totalFinal(2, 'L')}}</td>
+          <td>{{totalFinal(2, 'S')}}</td>
+          <td>{{totalFinal(3, 'J')}}</td>
+          <td>{{totalFinal(3, 'L')}}</td>
+          <td>{{totalFinal(3, 'S')}}</td>
+          <td>{{totalFinal(4, 'J')}}</td>
+          <td>{{totalFinal(4, 'L')}}</td>
+          <td>{{totalFinal(4, 'S')}}</td>
+        </tr>
+        <tr>
+          <td>GRAND TOTAL</td>
+          <td colspan="3">{{grandTotal(1, 'J')}}</td>
+          <td colspan="3">{{grandTotal(2, 'J')}}</td>
+          <td colspan="3">{{grandTotal(3, 'J')}}</td>
+          <td colspan="3">{{grandTotal(4, 'J')}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="position: fixed; bottom: 0; right: 0;">
+    <app-logout (userLoggedIn)="receiveMessage($event)"></app-logout>
+  </div>
 </ng-container>
